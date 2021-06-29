@@ -39,7 +39,7 @@ To run the test cases, install nose
 
 You can run the program using following command after git clone from command line interface:
 
-1. To run in the interactive mode
+1. To run in the interactive mode, run :-
     python __main__.py
 
     In this mode the program will accept, process and wait for commands from standard input until the command "Exit" or "exit" is entered.
