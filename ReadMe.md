@@ -44,8 +44,8 @@ You can run the program using following command after git clone from command lin
 
     In this mode the program will accept, process and wait for commands from standard input until the command "Exit" or "exit" is entered.
 
-2. To run using input files
-    python __main__.py --inputfile <filepath>
+2. To run using input files, run :-
+    python __main__.py --inputfile filepath
 
     In this project there are 4 example input files inside "data" folder.
 
