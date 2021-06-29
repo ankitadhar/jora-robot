@@ -6,6 +6,9 @@ cur_dir = constants.INIT_DIRECTION
 cur_pos = constants.INIT_POSITION
 
 def executeCmd(cmd, cmd_str):
+    """
+    executeCmd executes all the user commands
+    """
     global cur_dir
     global cur_pos
     x,y = cur_pos
@@ -49,6 +52,9 @@ def executeCmd(cmd, cmd_str):
         print("Command not implemented yet.")
 
 def extractCmd(clip):
+    """
+    this function extracts command and calls the execute function.
+    """
     clip = clip.strip()
     cmd_str = None
     cmd = clip.split(" ",1)[0]
@@ -67,6 +73,9 @@ def extractCmd(clip):
     return (cur_pos,cur_dir)
 
 def interactive():
+    """
+    while running in the interactive mode this function is executed
+    """
     clip = input()
     pos = (-1,-1)
     while("exit" != clip.lower()):
@@ -74,6 +83,11 @@ def interactive():
         clip = input()
 
 def main():
+    """
+    Main function of the program.
+    if --inputfile is provided then the commands are read and run from the file
+    otherwise the code is run in interactive mode until 'exit' is entered from the standard input.
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument("--inputfile", help="Filepath of tweets")
     args = parser.parse_args()
