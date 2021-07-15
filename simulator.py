@@ -76,7 +76,10 @@ class Simulator:
                 # if the returned value is not None.
                 pos, dir = ret_val
         elif constants.TRAVEL == cmd:
-            ret_val = self.command.travel(cmd_str, self.configuration)
+            if pos == constants.INIT_POSITION:
+                raise RobotNotPlacedOnTable("Robot not found on table.")
+            path = self.command.travel(cmd_str, pos)
+            return path
         else:
             raise CommandNotImplementedError(cmd + ": Command not implemented yet.")
         return (pos, dir)
@@ -102,11 +105,15 @@ class Simulator:
         cmd, cmd_str = self.extractCmd(clip)
 
         if cmd in constants.COMMANDS:
-            pos, dir = self.executeCmd(cmd, cmd_str)
-            # after executing the commands, update the configuration object 
-            # with new position and direction of the robot.
-            self.configuration.setPosition(pos)
-            self.configuration.setDirection(dir)
+            if cmd == constants.TRAVEL:
+                path = self.executeCmd(cmd, cmd_str)
+                print(f"path: {path}")
+            else:
+                pos, dir = self.executeCmd(cmd, cmd_str)
+                # after executing the commands, update the configuration object 
+                # with new position and direction of the robot.
+                self.configuration.setPosition(pos)
+                self.configuration.setDirection(dir)
         else:
             raise CommandNotFoundError(cmd + ": command not found.")
             

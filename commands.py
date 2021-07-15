@@ -128,6 +128,7 @@ class Commands(Grid):
         given the arguments of the place commands, it is first verified to be valid and then the robot
         is placed at the location, facing the direction as per the arguments.
         """
+        if not cmd_str: raise InvalidCommandFormatError("Invalid PLACE command argument format.")
         isPatternValid = self.PATTERN_PLACE.search(cmd_str)
         if isPatternValid:
             # if the pattern of the argument is valid
@@ -143,15 +144,6 @@ class Commands(Grid):
                 raise IllegalCoordinateError("Co-ordinates are out of the table.")
         else:
             raise InvalidCommandFormatError("Invalid PLACE command argument format.")
-
-    def dfs(self, visited, graph, node):
-        if not graph: return
-        if node not in visited:
-            print(node)
-            visited.add(node)
-            # if len(graph[node]) < 1: return
-            for child_node in graph[node]:
-                self.dfs(visited, graph, child_node)
 
     def transit(self, start, end, path):
         if start == end: 
@@ -194,7 +186,8 @@ class Commands(Grid):
     #     return path
     
 
-    def travel(self, cmd_str, conf):
+    def travel(self, cmd_str, pos):
+        if not cmd_str: raise InvalidCommandFormatError("Invalid TRAVEL command argument format.")
         isPatternValid = self.PATTERN_TRAVEL.search(cmd_str)
         if isPatternValid:
             x, y = cmd_str.split(',')
@@ -202,7 +195,7 @@ class Commands(Grid):
                 raise IllegalCoordinateError("Co-ordinates are one of the potholes.")
             if (int(x) >= self.xmin and int(x) <= self.xmax and
                 int(y) >= self.ymin and int(y) <= self.ymax):
-                cur_pos = conf.getPosition()
+                cur_pos = pos
                 self.v = set()
                 # self.v.add(cur_pos)
                 # print(f"cur_pos: {cur_pos}")
@@ -210,7 +203,7 @@ class Commands(Grid):
                 if cur_pos == (int(x),int(y)): print("Robot already at destination")
                 path = self.transit(cur_pos, (int(x),int(y)), [])
                 if path[-1] != (int(x),int(y)): raise NoPathToDestination("Path doesn't exist")
-                print(f"path: {path}")
+                return path
             else: 
                 raise IllegalCoordinateError("Co-ordinates are not on the board.")
 
