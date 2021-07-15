@@ -15,6 +15,9 @@
 # 3. LEFT
 # 4. RIGHT
 # 5. REPORT
+# 6. TRAVEL <X,Y>
+#           X <- x coordinate of destination
+#           Y <- y coordinate of destination
 #
 
 from simulator import Simulator
