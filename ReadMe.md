@@ -55,8 +55,11 @@ You can run the program using following command after git clone from command lin
 - Example inputs and outputs:
 a)
 PLACE 0,0,NORTH
+
 MOVE
+
 REPORT
+
 Output: 0,1,NORTH
 
 b)
