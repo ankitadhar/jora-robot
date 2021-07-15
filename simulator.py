@@ -57,7 +57,7 @@ class Simulator:
                 raise RobotNotPlacedOnTable("Robot not found on table.")
             x, y = pos
             print(str(x)+','+str(y)+','+dir)
-        elif constants.TRAVEL == cmd:
+        elif constants.TRAVELCOMMAND == cmd:
             # if command is TRAVEL and the robot is not on the table, an exception is raised
             # otherwise the path that can be travelled to reach the destination is returned
             if pos == constants.INIT_POSITION:
@@ -107,7 +107,7 @@ class Simulator:
         cmd, cmd_str = self.extractCmd(clip)
 
         if cmd in constants.COMMANDS:
-            if cmd == constants.TRAVEL:
+            if cmd == constants.TRAVELCOMMAND:
                 # if command is TRAVEL a path will be returned
                 path = self.executeCmd(cmd, cmd_str)
                 print(f"path: {path}")

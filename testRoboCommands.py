@@ -175,7 +175,7 @@ class TestRobotSetup(unittest.TestCase):
         self.simulator.configuration.setPosition(pos1)
         self.simulator.configuration.setDirection(dir1)
         to_pos = f"{constants.GRID_WIDTH + 1},3"
-        path = self.simulator.executeCmd("TRAVEL", to_pos)
+        path = self.simulator.executeCmd(constants.TRAVELCOMMAND, to_pos)
         assert path == [(0, 0), (1, 0)]
 
     @raises(NoPathToDestination)
@@ -188,8 +188,21 @@ class TestRobotSetup(unittest.TestCase):
         self.simulator.configuration.setPosition(pos1)
         self.simulator.configuration.setDirection(dir1)
         to_pos = "4,4"
-        path = self.simulator.executeCmd("TRAVEL", to_pos)
-        assert path == [(0, 0), (1, 0)]
+        self.simulator.executeCmd(constants.TRAVELCOMMAND, to_pos)
+
+    @raises(IllegalCoordinateError)
+    def testTravelToPothole(self):
+        x = 0
+        y = 0
+        direction = constants.NORTH
+        cmd_str = str(x)+','+str(y)+','+direction
+        pos1, dir1 = self.simulator.executeCmd(constants.PLACECOMMAND, cmd_str)
+        self.simulator.configuration.setPosition(pos1)
+        self.simulator.configuration.setDirection(dir1)
+        toX,toY = constants.GRID_POTHOLES[0]
+        to_pos = str(toX)+','+str(toY)
+        self.simulator.executeCmd(constants.TRAVELCOMMAND, to_pos)
+    
 
     def testTravel(self):
         x = 0
@@ -200,7 +213,7 @@ class TestRobotSetup(unittest.TestCase):
         self.simulator.configuration.setPosition(pos1)
         self.simulator.configuration.setDirection(dir1)
         to_pos = "1,0"
-        path = self.simulator.executeCmd("TRAVEL", to_pos)
+        path = self.simulator.executeCmd(constants.TRAVELCOMMAND, to_pos)
         assert path == [(0, 0), (1, 0)]
 
     def testGetSucc(self):

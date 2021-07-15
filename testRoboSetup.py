@@ -58,7 +58,7 @@ class TestRobotSetup(unittest.TestCase):
     @raises(RobotNotPlacedOnTable)
     def testTravelWNoRobot(self):
         to_pos = "4,4"
-        self.simulator.executeCmd("TRAVEL", to_pos)
+        self.simulator.executeCmd(constants.TRAVELCOMMAND, to_pos)
 
 if __name__ == '__main__':
     unittest.main()
