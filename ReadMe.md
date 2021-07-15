@@ -54,6 +54,7 @@ You can run the program using following command after git clone from command lin
 
 - Example inputs and outputs:
 a)
+
 PLACE 0,0,NORTH
 
 MOVE
@@ -63,14 +64,21 @@ REPORT
 Output: 0,1,NORTH
 
 b)
+
 PLACE 0,0,NORTH
+
 LEFT
+
 REPORT
+
 Output: 0,0,WEST
 
 c)
+
 PLACE 0,0,NORTH
+
 TRAVEL 1,0
+
 Output: path: [(0, 0), (1, 0)]
 
 
