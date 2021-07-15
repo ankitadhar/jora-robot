@@ -8,7 +8,7 @@ import constants
 class TestRobotSetup(unittest.TestCase):
     grid_height = constants.GRID_HEIGHT
     grid_width = constants.GRID_WIDTH
-    command = Commands(grid_width, grid_height)
+    command = Commands(grid_width, grid_height, constants.GRID_POTHOLES)
     configuration = Configuration(constants.INIT_POSITION, constants.INIT_DIRECTION)
     simulator = Simulator()
 
@@ -57,9 +57,22 @@ class TestRobotSetup(unittest.TestCase):
         assert pos == (x, y)
         assert dir == direction
 
+    def testMOVECmdToPothole(self):
+        x = 3
+        y = 2
+        direction = "NORTH"
+        cmd_str = str(x)+','+str(y)+','+direction
+        pos1, dir1 = self.simulator.executeCmd("PLACE", cmd_str)
+        self.simulator.configuration.setPosition(pos1)
+        self.simulator.configuration.setDirection(dir1)
+        pos, dir = self.simulator.executeCmd("MOVE", None)
+        # print(pos, dir)
+        assert pos == (x, y)
+        assert dir == direction
+
     def testMOVECmd3(self):
         x = 2
-        y = 2
+        y = 3
         dx = 1
         dy = 1
         direction = "SOUTH"

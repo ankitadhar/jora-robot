@@ -17,6 +17,7 @@ INIT_DIRECTION = None # No initial direction for the robot
 INIT_POSITION = (-1,-1) # initial out of the table position of robot
 GRID_HEIGHT = 5 # height of the table
 GRID_WIDTH = 5 # width of the table
+GRID_POTHOLES = [(2,1),(3,3)]
 
 
 ### for basic

@@ -8,7 +8,7 @@ import constants
 class TestRobotSetup(unittest.TestCase):
     grid_height = constants.GRID_HEIGHT
     grid_width = constants.GRID_WIDTH
-    command = Commands(grid_width, grid_height)
+    command = Commands(grid_width, grid_height, constants.GRID_POTHOLES)
     simulator = Simulator()
 
     @raises(InvalidCommandFormatError)
@@ -31,12 +31,19 @@ class TestRobotSetup(unittest.TestCase):
         cmd_str = str(x)+','+str(y)+','+direction
         self.simulator.executeCmd("PLACE", cmd_str)
 
+    @raises(IllegalCoordinateError)
+    def testPlaceCmdPosPothole(self):
+        (x,y) = constants.GRID_POTHOLES[1]
+        direction = "NORTH"
+        cmd_str = str(x)+','+str(y)+','+direction
+        self.simulator.executeCmd("PLACE", cmd_str)
+
     @raises(IllegalGridStructure)
     def testIllegalGridSetup(self):
-        Grid(-1,2)
+        Grid(-1,2,constants.GRID_POTHOLES)
     
     def testLegalGridSetup(self):
-        Grid(5,5)
+        Grid(5,5,constants.GRID_POTHOLES)
 
     @raises(RobotNotPlacedOnTable)
     def testReportNoRobotOnTable(self):

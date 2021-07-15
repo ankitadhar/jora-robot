@@ -77,9 +77,11 @@ class Commands(Grid):
         """
         x, y = position
         dx, dy = self.directionToVector(dir)
-
-        if (dy > 0 and y < self.ymax) or (dy < 0 and y > self.ymin): return (x, int(y + dy))
-        if (dx > 0 and x < self.xmax) or (dx < 0 and x > self.xmin): return (int(x + dx), y)
+        
+        if ((dy > 0 and y < self.ymax) or (dy < 0 and y > self.ymin)) and ((x, int(y + dy)) not in self.potholes): 
+            return x, int(y + dy)
+        if ((dx > 0 and x < self.xmax) or (dx < 0 and x > self.xmin)) and ((int(x + dx), y) not in self.potholes): 
+            return (int(x + dx), y)
         return (x,y)
     
     def place(self, cmd_str):
@@ -91,6 +93,8 @@ class Commands(Grid):
         if isPatternValid:
             # if the pattern of the argument is valid
             x,y,dir = cmd_str.split(',')
+            if (int(x),int(y)) in self.potholes: 
+                raise IllegalCoordinateError("Co-ordinates are one of the potholes.")
             if (int(x) >= self.xmin and int(x) <= self.xmax and
                 int(y) >= self.ymin and int(y) <= self.ymax):
                 # if the co-ordinates provided in the argument are valid

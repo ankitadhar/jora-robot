@@ -35,7 +35,7 @@ class Simulator:
     def __init__(self):
         grid_height = constants.GRID_HEIGHT
         grid_width = constants.GRID_WIDTH
-        self.command = Commands(grid_width, grid_height)
+        self.command = Commands(grid_width, grid_height, constants.GRID_POTHOLES)
         # instantiating Commands class with the grid height and width, on which commands are to be executed.
         self.configuration = Configuration(constants.INIT_POSITION, constants.INIT_DIRECTION)
         # initializing the robot's position as out of the table and direction as None

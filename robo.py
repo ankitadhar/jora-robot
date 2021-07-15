@@ -12,10 +12,11 @@ class Grid:
     """
     Object to store the table structure
     """
-    def __init__(self, width, height):
+    def __init__(self, width, height, potholes):
         if width > 0 and height > 0:
             self.xmax = width - 1
             self.ymax = height - 1
+            self.potholes = potholes
             self.xmin = 0
             self.ymin = 0
         else:
