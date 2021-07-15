@@ -7,12 +7,12 @@ The application is a simulation of a toy robot moving on a square tabletop, of d
 * The robot is free to roam around the surface of the table, but must be prevented from falling to destruction. Any movement that would result in the robot falling from the table must be prevented, however further valid movement commands must still be allowed.
 
 * This application can read in commands of the following form -
-PLACE X,Y,F
-MOVE
-LEFT
-RIGHT
-REPORT
-TRAVEL X,Y
+* * PLACE X,Y,F
+* * MOVE
+* * LEFT
+* * RIGHT
+* * REPORT
+* * TRAVEL X,Y
 
 - PLACE will put the toy robot on the table in position X,Y and facing NORTH, SOUTH, EAST or WEST.
 The origin (0,0) can be considered to be the SOUTH WEST most corner.
@@ -29,7 +29,7 @@ The first valid command to the robot is a PLACE command, after that, any sequenc
 * A robot that is not on the table can choose to ignore the MOVE, LEFT, RIGHT and REPORT commands.
 
 * Constraints:
-The toy robot must not fall off the table during movement. This also includes the initial placement of the toy robot.
+The toy robot must not fall off the table (either from the edges or into the potholes) during movement. This also includes the initial placement of the toy robot.
 * * Any move that would cause the robot to fall must be ignored.
 
 ## Requirements:
