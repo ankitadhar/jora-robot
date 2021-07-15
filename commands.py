@@ -56,6 +56,9 @@ class Commands(Grid):
     v = set()
 
     def getSuccessors(self, pos):
+        """
+        given a position, all the legal adjacent positions to which robot can move to are returned
+        """
         successors = set()
 
         for dir in self.directions:
