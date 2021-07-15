@@ -75,6 +75,8 @@ class Simulator:
             if ret_val :
                 # if the returned value is not None.
                 pos, dir = ret_val
+        elif constants.TRAVEL == cmd:
+            ret_val = self.command.travel(cmd_str, self.configuration)
         else:
             raise CommandNotImplementedError(cmd + ": Command not implemented yet.")
         return (pos, dir)

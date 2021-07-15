@@ -46,4 +46,3 @@ class Configuration:
 
     def setDirection(self, direction):
         self.direction = direction
-

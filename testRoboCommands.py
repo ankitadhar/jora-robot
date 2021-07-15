@@ -12,6 +12,11 @@ class TestRobotSetup(unittest.TestCase):
     configuration = Configuration(constants.INIT_POSITION, constants.INIT_DIRECTION)
     simulator = Simulator()
 
+    def testGetSucc(self):
+        x = 0
+        y = 0
+        print(self.command.getSuccessors((x,y)))
+
     def testPlaceCmd1(self):
         x = 0
         y = 2

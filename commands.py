@@ -18,6 +18,12 @@ class IllegalCoordinateError(Exception):
     """
     pass
 
+class NoPathToDestination(Exception):
+    """
+    Exception to handle inexistence of path from current position to destination
+    """
+    pass
+
 class Commands(Grid):
     """
     A collection of methods for manipulating robot's movement.
@@ -32,13 +38,46 @@ class Commands(Grid):
                    constants.WEST:  (-1, 0)}
     
     # pattern to validate arguments of PLACE command
-    PATTERN = compile(
+    PATTERN_PLACE = compile(
         r"""
             (?P<x>\d+),                  # x coord
             (?P<y>\d+),                  # y coord
             (?P<f>NORTH|EAST|SOUTH|WEST) # facing
             """, X
     )
+
+    PATTERN_TRAVEL = compile(
+        r"""
+            (?P<x>\d+),                  # x coord
+            (?P<y>\d+)                   # y coord
+            """, X
+    )
+
+    v = set()
+
+    def getSuccessors(self, pos):
+        successors = set()
+
+        for dir in self.directions:
+            # print(f"pos: {pos}")
+            # print(f"vec: {self._directions[dir]}")
+            # print(f"val: {pos + self._directions[dir]}")
+            (cur_x,cur_y) = pos
+            dx, dy = self._directions[dir]
+            x, y = cur_x+dx, cur_y+dy
+            """ if (x, y) not in self.potholes: successors.add((x,y))
+            print(f"xmin: {self.xmin}")
+            print(f"xmin: {self.xmax}")
+            print(f"xmin: {self.ymin}")
+            print(f"xmin: {self.ymax}")
+            print(x, y)
+            print(f"condition: {x >= self.xmin and x <= self.xmax and y >= self.ymin and y <= self.ymax}") """
+            if (x >= self.xmin and x <= self.xmax
+                and y >= self.ymin and y <= self.ymax):
+                if (x, y) not in self.potholes:
+                    successors.add((x,y))
+        return successors
+
         
     def nextIndex(self, index):
         """
@@ -89,7 +128,7 @@ class Commands(Grid):
         given the arguments of the place commands, it is first verified to be valid and then the robot
         is placed at the location, facing the direction as per the arguments.
         """
-        isPatternValid = self.PATTERN.search(cmd_str)
+        isPatternValid = self.PATTERN_PLACE.search(cmd_str)
         if isPatternValid:
             # if the pattern of the argument is valid
             x,y,dir = cmd_str.split(',')
@@ -104,4 +143,75 @@ class Commands(Grid):
                 raise IllegalCoordinateError("Co-ordinates are out of the table.")
         else:
             raise InvalidCommandFormatError("Invalid PLACE command argument format.")
+
+    def dfs(self, visited, graph, node):
+        if not graph: return
+        if node not in visited:
+            print(node)
+            visited.add(node)
+            # if len(graph[node]) < 1: return
+            for child_node in graph[node]:
+                self.dfs(visited, graph, child_node)
+
+    def transit(self, start, end, path):
+        if start == end: 
+            path.append(start)
+            """ print("true")
+            print(path) """
+            return path
+        successors = self.getSuccessors(start)
+        if start not in self.v:
+            path.append(start)
+            self.v.add(start)
+            for child in successors:
+                path = self.transit(child, end, path)
+                if end == path[-1]: 
+                    return path
+                if start != path[-1]:
+                    path = path[:-1]
+                """ print("intermediat:\n-------------------------")
+                print(f"path: {path}")
+                print(f"start: {start}")
+                print("intermediat:\n-------------------------") """
+        return path
+
+    # def transit(self, start, end, path):
+    #     # print(f"succ: {successors}")
+    #     if start == end: return path
+    #     successors = self.getSuccessors(start)
+    #     print(f"pos: {start}")
+    #     print(f"successors: {successors}")
+    #     # if not successors: return path
+    #     if start not in self.v:
+    #         for child in successors:
+    #             path.append(child)
+    #             print(path)
+    #             """ if child == end: 
+    #                 print(f'end: {end}')
+    #                 return path """
+    #             path = self.transit(child, end, path)
+    #             self.v.add(start)
+    #     return path
+    
+
+    def travel(self, cmd_str, conf):
+        isPatternValid = self.PATTERN_TRAVEL.search(cmd_str)
+        if isPatternValid:
+            x, y = cmd_str.split(',')
+            if (int(x),int(y)) in self.potholes: 
+                raise IllegalCoordinateError("Co-ordinates are one of the potholes.")
+            if (int(x) >= self.xmin and int(x) <= self.xmax and
+                int(y) >= self.ymin and int(y) <= self.ymax):
+                cur_pos = conf.getPosition()
+                self.v = set()
+                # self.v.add(cur_pos)
+                # print(f"cur_pos: {cur_pos}")
+                # print(f"TO: {(x,y)}")
+                if cur_pos == (int(x),int(y)): print("Robot already at destination")
+                path = self.transit(cur_pos, (int(x),int(y)), [])
+                if path[-1] != (int(x),int(y)): raise NoPathToDestination("Path doesn't exist")
+                print(f"path: {path}")
+            else: 
+                raise IllegalCoordinateError("Co-ordinates are not on the board.")
+
 
