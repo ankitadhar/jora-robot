@@ -57,6 +57,13 @@ class Simulator:
                 raise RobotNotPlacedOnTable("Robot not found on table.")
             x, y = pos
             print(str(x)+','+str(y)+','+dir)
+        elif constants.TRAVEL == cmd:
+            # if command is TRAVEL and the robot is not on the table, an exception is raised
+            # otherwise the path that can be travelled to reach the destination is returned
+            if pos == constants.INIT_POSITION:
+                raise RobotNotPlacedOnTable("Robot not found on table.")
+            path = self.command.travel(cmd_str, self.configuration)
+            return path
         elif cmd != constants.PLACECOMMAND and pos == constants.INIT_POSITION:
             # All the commands (except PLACE command) are ignored until the robot is placed on the table.
             return (pos, dir)
@@ -75,11 +82,6 @@ class Simulator:
             if ret_val :
                 # if the returned value is not None.
                 pos, dir = ret_val
-        elif constants.TRAVEL == cmd:
-            if pos == constants.INIT_POSITION:
-                raise RobotNotPlacedOnTable("Robot not found on table.")
-            path = self.command.travel(cmd_str, pos)
-            return path
         else:
             raise CommandNotImplementedError(cmd + ": Command not implemented yet.")
         return (pos, dir)
@@ -106,6 +108,7 @@ class Simulator:
 
         if cmd in constants.COMMANDS:
             if cmd == constants.TRAVEL:
+                # if command is TRAVEL a path will be returned
                 path = self.executeCmd(cmd, cmd_str)
                 print(f"path: {path}")
             else:

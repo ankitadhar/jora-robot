@@ -53,5 +53,12 @@ class TestRobotSetup(unittest.TestCase):
     def testIllegalCmd(self):
         self.simulator.simulate("JUMP")
 
+    #### Code Pairing Test Cases #### 
+
+    @raises(RobotNotPlacedOnTable)
+    def testTravelWNoRobot(self):
+        to_pos = "4,4"
+        self.simulator.executeCmd("TRAVEL", to_pos)
+
 if __name__ == '__main__':
     unittest.main()

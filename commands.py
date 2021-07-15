@@ -59,19 +59,9 @@ class Commands(Grid):
         successors = set()
 
         for dir in self.directions:
-            # print(f"pos: {pos}")
-            # print(f"vec: {self._directions[dir]}")
-            # print(f"val: {pos + self._directions[dir]}")
             (cur_x,cur_y) = pos
             dx, dy = self._directions[dir]
             x, y = cur_x+dx, cur_y+dy
-            """ if (x, y) not in self.potholes: successors.add((x,y))
-            print(f"xmin: {self.xmin}")
-            print(f"xmin: {self.xmax}")
-            print(f"xmin: {self.ymin}")
-            print(f"xmin: {self.ymax}")
-            print(x, y)
-            print(f"condition: {x >= self.xmin and x <= self.xmax and y >= self.ymin and y <= self.ymax}") """
             if (x >= self.xmin and x <= self.xmax
                 and y >= self.ymin and y <= self.ymax):
                 if (x, y) not in self.potholes:
@@ -146,47 +136,37 @@ class Commands(Grid):
             raise InvalidCommandFormatError("Invalid PLACE command argument format.")
 
     def transit(self, start, end, path):
+        """
+        a dfs algorithm is used to find a path from start position to destination (end) position.
+        """
         if start == end: 
-            path.append(start)
-            """ print("true")
-            print(path) """
+            # if destination is reached, return the accumulated path
+            path.append(end)
             return path
         successors = self.getSuccessors(start)
         if start not in self.v:
+            # if the position in the transition is not visited, mark it visited and add it to the path
             path.append(start)
             self.v.add(start)
             for child in successors:
                 path = self.transit(child, end, path)
                 if end == path[-1]: 
+                    # check the last element on the path recieved, if it is destination then return the path
                     return path
+
                 if start != path[-1]:
+                    # check the last element on the path if it is not the current position in transition, then
+                    # a path shift is in process. We need to remove the last element to proceed.
                     path = path[:-1]
-                """ print("intermediat:\n-------------------------")
-                print(f"path: {path}")
-                print(f"start: {start}")
-                print("intermediat:\n-------------------------") """
         return path
 
-    # def transit(self, start, end, path):
-    #     # print(f"succ: {successors}")
-    #     if start == end: return path
-    #     successors = self.getSuccessors(start)
-    #     print(f"pos: {start}")
-    #     print(f"successors: {successors}")
-    #     # if not successors: return path
-    #     if start not in self.v:
-    #         for child in successors:
-    #             path.append(child)
-    #             print(path)
-    #             """ if child == end: 
-    #                 print(f'end: {end}')
-    #                 return path """
-    #             path = self.transit(child, end, path)
-    #             self.v.add(start)
-    #     return path
-    
-
-    def travel(self, cmd_str, pos):
+    def travel(self, cmd_str, conf):
+        """
+        given the arguments of the travel command, first it is verified if the arguments for the destination
+        are valid. If so then, it is tested if the robot is already at the destination.
+        If robot is not at destination, if any path exists from current position of robot to destination, then
+        a path is found and returned otherwise an exception is raised if no path exists. 
+        """
         if not cmd_str: raise InvalidCommandFormatError("Invalid TRAVEL command argument format.")
         isPatternValid = self.PATTERN_TRAVEL.search(cmd_str)
         if isPatternValid:
@@ -195,16 +175,11 @@ class Commands(Grid):
                 raise IllegalCoordinateError("Co-ordinates are one of the potholes.")
             if (int(x) >= self.xmin and int(x) <= self.xmax and
                 int(y) >= self.ymin and int(y) <= self.ymax):
-                cur_pos = pos
+                cur_pos = conf.getPosition()
                 self.v = set()
-                # self.v.add(cur_pos)
-                # print(f"cur_pos: {cur_pos}")
-                # print(f"TO: {(x,y)}")
                 if cur_pos == (int(x),int(y)): print("Robot already at destination")
                 path = self.transit(cur_pos, (int(x),int(y)), [])
                 if path[-1] != (int(x),int(y)): raise NoPathToDestination("Path doesn't exist")
                 return path
             else: 
                 raise IllegalCoordinateError("Co-ordinates are not on the board.")
-
-

@@ -1,6 +1,6 @@
 import unittest
 from nose.tools import raises
-from commands import Commands
+from commands import Commands, IllegalCoordinateError, NoPathToDestination
 from robo import Configuration
 from simulator import Simulator
 import constants
@@ -12,14 +12,10 @@ class TestRobotSetup(unittest.TestCase):
     configuration = Configuration(constants.INIT_POSITION, constants.INIT_DIRECTION)
     simulator = Simulator()
 
-    def testGetSucc(self):
-        x = 0
-        y = 0
-        print(self.command.getSuccessors((x,y)))
 
     def testPlaceCmd1(self):
         x = 0
-        y = 2
+        y = 3
         direction = "NORTH"
         cmd_str = str(x)+','+str(y)+','+direction
         pos, dir = self.simulator.executeCmd("PLACE", cmd_str)
@@ -165,7 +161,54 @@ class TestRobotSetup(unittest.TestCase):
         pos, dir = self.simulator.executeCmd("RIGHT", None)
 
         assert pos == (x, y)
-        assert dir == "NORTH"
+        assert dir == "NORTH"   
+
+    #### Code Pairing Test Cases #### 
+        
+    @raises(IllegalCoordinateError)
+    def testTravelOutofBoard(self):
+        x = 0
+        y = 0
+        direction = "NORTH"
+        cmd_str = str(x)+','+str(y)+','+direction
+        pos1, dir1 = self.simulator.executeCmd("PLACE", cmd_str)
+        self.simulator.configuration.setPosition(pos1)
+        self.simulator.configuration.setDirection(dir1)
+        to_pos = f"{constants.GRID_WIDTH + 1},3"
+        path = self.simulator.executeCmd("TRAVEL", to_pos)
+        assert path == [(0, 0), (1, 0)]
+
+    @raises(NoPathToDestination)
+    def testTravelWNoPath(self):
+        x = 0
+        y = 0
+        direction = "NORTH"
+        cmd_str = str(x)+','+str(y)+','+direction
+        pos1, dir1 = self.simulator.executeCmd("PLACE", cmd_str)
+        self.simulator.configuration.setPosition(pos1)
+        self.simulator.configuration.setDirection(dir1)
+        to_pos = "4,4"
+        path = self.simulator.executeCmd("TRAVEL", to_pos)
+        assert path == [(0, 0), (1, 0)]
+
+    def testTravel(self):
+        x = 0
+        y = 0
+        direction = "NORTH"
+        cmd_str = str(x)+','+str(y)+','+direction
+        pos1, dir1 = self.simulator.executeCmd("PLACE", cmd_str)
+        self.simulator.configuration.setPosition(pos1)
+        self.simulator.configuration.setDirection(dir1)
+        to_pos = "1,0"
+        path = self.simulator.executeCmd("TRAVEL", to_pos)
+        assert path == [(0, 0), (1, 0)]
+
+    def testGetSucc(self):
+        x = 0
+        y = 0
+        succ = self.command.getSuccessors((x,y))
+        assert succ == {(0, 1), (1, 0)}
+
 
 if __name__ == '__main__':
     unittest.main()
